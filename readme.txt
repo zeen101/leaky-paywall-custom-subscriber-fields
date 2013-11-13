@@ -1,15 +1,15 @@
-=== IssueM - Leaky Paywall - IP Exceptions ===
+=== IssueM - Leaky Paywall - Subscriber Meta ===
 Contributors: layotte
 Tags: magazine, issue, manager, paywall, leaky
 Requires at least: 3.0
 Tested up to: 3.7
 Stable tag: 1.0.0
 
-Allow IP addresses to access content through IssueM's Leaky Paywall. More info at http://issuem.com
+Allow Subscriber Meta to IssueM's Leaky Paywall. More info at http://issuem.com
 
 == Description ==
 
-Allow IP addresses to access content through IssueM's Leaky Paywall. More info at http://issuem.com
+Allow Subscriber to IssueM's Leaky Paywall. More info at http://issuem.com
 
 == Installation ==
 
@@ -18,7 +18,7 @@ Allow IP addresses to access content through IssueM's Leaky Paywall. More info a
 
 == Frequently Asked Questions ==
 
-= What are the minimum requirements for IssueM's Leaky Paywall - IP Exceptions? =
+= What are the minimum requirements for IssueM's Leaky Paywall - Subscriber Meta? =
 
 You must have:
 
@@ -36,7 +36,7 @@ You must have:
 
 == License ==
 
-IssueM - Leaky Paywall - IP Exceptions
+IssueM - Leaky Paywall - Subscriber Meta 
 Copyright (C) 2011 The Complete Website, LLC.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
