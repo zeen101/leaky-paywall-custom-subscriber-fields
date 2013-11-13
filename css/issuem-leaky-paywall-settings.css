@@ -1,0 +1,12 @@
+#issuem_leaky_paywall_subscriber_meta_wrapper {
+	display: table;
+	width: 100%;
+}
+
+#issuem_leaky_paywall_subscriber_meta_wrapper .row {
+	display: table-row;
+}
+
+#issuem_leaky_paywall_subscriber_meta_wrapper .cell {
+	display: cell;
+}
