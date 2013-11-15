@@ -39,12 +39,16 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 			add_filter( 'leaky_paywall_subscribers_columns', array( $this, 'leaky_paywall_subscribers_columns' ) );
 			//add_filter( 'leaky_paywall_subscribers_sortable_columns', array( $this, 'leaky_paywall_subscribers_sortable_columns' ) );
 			add_filter( 'manage_leaky_paywall_susbcribers_custom_column', array( $this, 'manage_leaky_paywall_susbcribers_custom_column' ), 10, 3 );
+			
 			add_action( 'update_leaky_paywall_subscriber_form', array( $this, 'update_leaky_paywall_subscriber_form' ) );
 			add_action( 'update_leaky_paywall_subscriber', array( $this, 'update_leaky_paywall_subscriber' ) );
 			add_action( 'add_leaky_paywall_subscriber_form', array( $this, 'add_leaky_paywall_subscriber_form' ) );
 			add_action( 'add_leaky_paywall_subscriber', array( $this, 'add_leaky_paywall_subscriber' ) );
+			add_action( 'bulk_add_leaky_paywall_subscriber', array( $this, 'bulk_add_leaky_paywall_subscriber' ), 10, 3 );
+			
 			add_filter( 'issuem_leaky_paywall_subscriber_query_join', array( $this, 'issuem_leaky_paywall_subscriber_query_join' ) );
 			add_filter( 'issuem_leaky_paywall_search_susbcriber_where_array', array( $this, 'issuem_leaky_paywall_search_susbcriber_where_array' ), 10, 3 );
+			add_filter( 'issuem_leaky_paywall_bulk_add_headings', array( $this, 'issuem_leaky_paywall_bulk_add_headings' ) );
 			
 		}
 		
@@ -287,7 +291,22 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
                 	if ( !empty( $meta_key['name'] ) ) {
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
 	                	if ( !empty( $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] ) ) {
-	                		issuem_leaky_paywall_update_user_meta( $subscriber->hash, $meta_key, $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] );
+	                		issuem_leaky_paywall_update_user_meta( $subscriber->hash, $meta_key, trim( urldecode( $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] ) ) );
+	                	}
+                	}
+                }
+            }
+		}
+		
+		function bulk_add_leaky_paywall_subscriber( $subscriber, $keys, $import ) {
+			$settings = $this->get_settings();
+			
+            if ( !empty( $settings['meta_keys'] ) ) {
+                foreach ( $settings['meta_keys'] as $meta_key ) {
+                	if ( !empty( $meta_key['name'] ) ) {
+	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
+	                	if ( array_key_exists( $meta_key, $keys ) ) {
+	                		issuem_leaky_paywall_update_user_meta( $subscriber->hash, $meta_key, trim( $import[$keys[$meta_key]] ) );
 	                	}
                 	}
                 }
@@ -302,6 +321,19 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 		function issuem_leaky_paywall_search_susbcriber_where_array( $where_array, $search_type, $search  ) {
 			$where_array[] .= sprintf( "lpsm.`meta_value` %s '%s'", $search_type, $search );
             return $where_array;
+		}
+		
+		function issuem_leaky_paywall_bulk_add_headings( $headings ) {
+			$settings = $this->get_settings();
+			
+            if ( !empty( $settings['meta_keys'] ) ) {
+                foreach ( $settings['meta_keys'] as $meta_key ) {
+                	if ( !empty( $meta_key['name'] ) )
+	                	$headings[] = sanitize_title_with_dashes( $meta_key['name'] );
+                }
+            }
+            
+            return $headings;
 		}
 		
 		/**
