@@ -19,7 +19,7 @@ Note: this field only affects subscribers that are being added manually via the 
 
 == Frequently Asked Questions ==
 
-= What are the minimum requirements for IssueM's Leaky Paywall - Subscriber Meta? =
+= What are the minimum requirements for IssueM's Leaky Paywall - Custom Subscriber Fields? =
 
 You must have:
 
