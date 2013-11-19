@@ -1,5 +1,5 @@
 === IssueM - Leaky Paywall - Custom Subscriber Fields Addon===
-Contributors: layotte
+Contributors: layotte, peterericson
 Tags: magazine, news, metered, paywall, leaky, subscriber, meta
 Requires at least: 3.0
 Tested up to: 3.7
