@@ -5,7 +5,7 @@ Requires at least: 3.0
 Tested up to: 3.7
 Stable tag: 1.0.0
 
-Allow custom subscriber fields to IssueM's Leaky Paywall for WordPress. More info at http://LeakyPW.com
+Allow custom subscriber (meta) fields to IssueM's Leaky Paywall for WordPress. More info at http://LeakyPW.com
 
 == Description ==
 
