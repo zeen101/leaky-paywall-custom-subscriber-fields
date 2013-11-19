@@ -1,15 +1,16 @@
-=== IssueM - Leaky Paywall - Subscriber Meta ===
+=== IssueM - Leaky Paywall - Custom Subscriber Fields ===
 Contributors: layotte
-Tags: magazine, issue, manager, paywall, leaky
+Tags: magazine, news, metered, paywall, leaky, subscriber, meta
 Requires at least: 3.0
 Tested up to: 3.7
 Stable tag: 1.0.0
 
-Allow Subscriber Meta to IssueM's Leaky Paywall. More info at http://issuem.com
+Allow custom subscriber fields to IssueM's Leaky Paywall for WordPress. More info at http://LeakyPW.com
 
 == Description ==
 
-Allow Subscriber to IssueM's Leaky Paywall. More info at http://issuem.com
+Add custom subscriber fields to IssueM's Leaky Paywall. For example: Add 'Organization' as a new field to track what orgaization a new subscriber belogs to.
+Note: this field only affects subscribers that are being added manually via the WordPress Dashboard. More info at http://LeakyPW.com
 
 == Installation ==
 
@@ -36,7 +37,7 @@ You must have:
 
 == License ==
 
-IssueM - Leaky Paywall - Subscriber Meta 
+IssueM - Leaky Paywall - Custom Subscriber Fields 
 Copyright (C) 2011 The Complete Website, LLC.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
