@@ -12,6 +12,8 @@ Allow custom subscriber (meta) fields to IssueM's Leaky Paywall for WordPress. M
 An addon that lets you add custom subscriber fields to IssueM's Leaky Paywall WordPress plugin. For example: Add 'Organization' as a new field to track what organization a new subscriber belongs to.
 Note: this field only affects subscribers that are being added manually via the WordPress Dashboard. More info at http://LeakyPW.com
 
+You can follow this plugins development on [GitHub](https://github.com/IssueM/issuem-leaky-paywall-custom-susbcriber-fields-addon)
+
 == Installation ==
 
 1. Upload the entire `issuem-leaky-paywall` folder to your `/wp-content/plugins/` folder.
