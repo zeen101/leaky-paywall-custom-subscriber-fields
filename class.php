@@ -15,10 +15,6 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 	
 	class IssueM_Leaky_Paywall_Subscriber_Meta {
 		
-		private $plugin_name	= ISSUEM_LP_SM_NAME;
-		private $plugin_slug	= ISSUEM_LP_SM_SLUG;
-		private $basename		= ISSUEM_LP_SM_BASENAME;
-		
 		/**
 		 * Class constructor, puts things in motion
 		 *
