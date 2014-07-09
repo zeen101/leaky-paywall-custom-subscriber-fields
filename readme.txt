@@ -2,7 +2,7 @@
 Contributors: layotte, peterericson
 Tags: magazine, news, metered, paywall, leaky, subscriber, meta
 Requires at least: 3.0
-Tested up to: 3.7
+Tested up to: 3.9
 Stable tag: 1.0.0
 
 Allow custom subscriber (meta) fields to IssueM's Leaky Paywall for WordPress. More info at http://LeakyPW.com
