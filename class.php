@@ -25,6 +25,9 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 			$settings = $this->get_settings();
 			
 			add_action( 'admin_init', array( $this, 'upgrade' ) );
+			add_action( 'admin_notices', array( $this, 'update_notices' ) );
+					
+			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_wp_enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( $this, 'admin_wp_print_styles' ) );
@@ -42,8 +45,8 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 			add_action( 'add_leaky_paywall_subscriber', array( $this, 'add_leaky_paywall_subscriber' ) );
 			add_action( 'bulk_add_leaky_paywall_subscriber', array( $this, 'bulk_add_leaky_paywall_subscriber' ), 10, 3 );
 			
-			add_filter( 'issuem_leaky_paywall_subscriber_query_join', array( $this, 'issuem_leaky_paywall_subscriber_query_join' ) );
-			add_filter( 'issuem_leaky_paywall_search_susbcriber_where_array', array( $this, 'issuem_leaky_paywall_search_susbcriber_where_array' ), 10, 3 );
+			//add_filter( 'issuem_leaky_paywall_subscriber_query_join', array( $this, 'issuem_leaky_paywall_subscriber_query_join' ) );
+			//add_filter( 'issuem_leaky_paywall_search_susbcriber_where_array', array( $this, 'issuem_leaky_paywall_search_susbcriber_where_array' ), 10, 3 );
 			add_filter( 'issuem_leaky_paywall_bulk_add_headings', array( $this, 'issuem_leaky_paywall_bulk_add_headings' ) );
 			
 		}
@@ -74,6 +77,21 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 				|| 'toplevel_page_issuem-leaky-paywall' === $hook_suffix )
 				wp_enqueue_script( 'issuem_leaky_paywall_sm_settings_js', ISSUEM_LP_SM_URL . 'js/issuem-leaky-paywall-settings.js', array( 'jquery' ), ISSUEM_LP_SM_VERSION );
 				
+			
+		}
+		
+		/**
+		 * Initialize pigeonpack Admin Menu
+		 *
+		 * @since 1.0.0
+		 * @uses add_menu_page() Creates Pigeon Pack menu
+		 * @uses add_submenu_page() Creates Settings submenu to Pigeon Pack menu
+		 * @uses add_submenu_page() Creates Help submenu to Pigeon Pack menu
+		 * @uses do_action() To call 'pigeonpack_admin_menu' for future addons
+		 */
+		function admin_menu() {
+														
+			add_submenu_page( false, __( 'Update', 'issuem-lp-sm' ), __( 'Update', 'issuem-lp-sm' ), apply_filters( 'manage_leaky_paywall_settings', 'manage_options' ), 'leaky-paywall-subscriber-meta-update', array( $this, 'update_page' ) );
 			
 		}
 		
@@ -222,22 +240,35 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 		
 		function manage_leaky_paywall_susbcribers_custom_column( $output, $column, $hash ) {
 			
-			return issuem_leaky_paywall_get_user_meta( $hash, $column );
+			$lp_settings = get_issuem_leaky_paywall_settings();
+			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
+			
+        	$subscriber = get_issuem_leaky_paywall_subscriber_by_hash( $hash, $mode );
+			if ( !empty( $subscriber ) ) 
+				return get_user_meta( $subscriber->ID, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $column, true );
+			else
+				return '';
 			
 		}
 		
-		function update_leaky_paywall_subscriber_form( $subscriber ) {
+		function update_leaky_paywall_subscriber_form( $subscriber_id ) {
 			$settings = $this->get_settings();
+        	
+			$lp_settings = get_issuem_leaky_paywall_settings();
+			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 			
             if ( !empty( $settings['meta_keys'] ) ) {
                 foreach ( $settings['meta_keys'] as $meta_key ) {
                 	if ( !empty( $meta_key['checked'] ) && 'on' === $meta_key['checked'] ) {
                 		$label = $meta_key['name'];
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
+						           	
+						$meta_value = get_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, true );
+						
 	                ?>
                     	<p>
                         <label for="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key" style="display:table-cell"><?php echo $label; ?></label>
-                        <input id="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key" class="subscriber-meta-key subscriber-<?php echo $meta_key; ?>-meta-key" type="text" value="<?php echo issuem_leaky_paywall_get_user_meta( $subscriber->hash, $meta_key ); ?>" name="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key"  />
+                        <input id="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key" class="subscriber-meta-key subscriber-<?php echo $meta_key; ?>-meta-key" type="text" value="<?php echo $meta_value; ?>" name="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key"  />
                         </p>
 	                <?php
                 	}
@@ -245,15 +276,19 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
             }
 		}
 		
-		function update_leaky_paywall_subscriber( $subscriber ) {
+		function update_leaky_paywall_subscriber( $subscriber_id ) {
 			$settings = $this->get_settings();
-			
+        	
+			$lp_settings = get_issuem_leaky_paywall_settings();
+			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
+
             if ( !empty( $settings['meta_keys'] ) ) {
                 foreach ( $settings['meta_keys'] as $meta_key ) {
                 	if ( !empty( $meta_key['name'] ) ) {
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
 	                	if ( !empty( $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] ) ) {
-	                		issuem_leaky_paywall_update_user_meta( $subscriber->hash, $meta_key, $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] );
+	                	
+							update_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] );
 	                	}
                 	}
                 }
@@ -279,30 +314,36 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
             }
 		}
 		
-		function add_leaky_paywall_subscriber( $subscriber ) {
+		function add_leaky_paywall_subscriber( $subscriber_id ) {
 			$settings = $this->get_settings();
+        	
+			$lp_settings = get_issuem_leaky_paywall_settings();
+			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 			
             if ( !empty( $settings['meta_keys'] ) ) {
                 foreach ( $settings['meta_keys'] as $meta_key ) {
                 	if ( !empty( $meta_key['name'] ) ) {
-	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
+	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );			
 	                	if ( !empty( $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] ) ) {
-	                		issuem_leaky_paywall_update_user_meta( $subscriber->hash, $meta_key, trim( urldecode( $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] ) ) );
+							update_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] );
 	                	}
                 	}
                 }
             }
 		}
 		
-		function bulk_add_leaky_paywall_subscriber( $subscriber, $keys, $import ) {
+		function bulk_add_leaky_paywall_subscriber( $subscriber_id, $keys, $import ) {
 			$settings = $this->get_settings();
 			
+			$lp_settings = get_issuem_leaky_paywall_settings();
+			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
+						
             if ( !empty( $settings['meta_keys'] ) ) {
                 foreach ( $settings['meta_keys'] as $meta_key ) {
                 	if ( !empty( $meta_key['name'] ) ) {
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
 	                	if ( array_key_exists( $meta_key, $keys ) ) {
-	                		issuem_leaky_paywall_update_user_meta( $subscriber->hash, $meta_key, trim( $import[$keys[$meta_key]] ) );
+							update_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, trim( $import[$keys[$meta_key]] ) );
 	                	}
                 	}
                 }
@@ -332,6 +373,41 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
             return $headings;
 		}
 		
+		function update_page() {
+			// Display HTML form for the options below
+			?>
+			<div class=wrap>
+            <div style="width:70%;" class="postbox-container">
+            <div class="metabox-holder">	
+            <div class="meta-box-sortables ui-sortable">
+            
+                <form id="issuem" method="post" action="">
+            
+                    <h2 style='margin-bottom: 10px;' ><?php _e( "Leaky Paywall - Subscriber Meta Updater", 'issuem-lp-sm' ); ?></h2>
+                    
+					<?php
+					
+					$manual_update_version = get_option( 'leaky_paywall_subscriber_meta_manual_update_version' );
+					$manual_update_version = '1.2.0'; //CHANGEME
+										
+					if ( version_compare( $manual_update_version, '2.0.0', '<' ) )
+						$this->update_2_0_0();
+									
+					?>
+                                        
+					<?php wp_nonce_field( 'issuem_leaky_paywall_subscriber_meta_update', 'issuem_leaky_paywall_subscriber_meta_update_nonce' ); ?>
+					
+                    <?php do_action( 'issuem_leaky_paywall_update_form' ); ?>
+                    
+                </form>
+                
+            </div>
+            </div>
+            </div>
+			</div>
+			<?php
+		}
+		
 		/**
 		 * Upgrade function, tests for upgrade version changes and performs necessary actions
 		 *
@@ -347,13 +423,11 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 				$old_version = 0;
 				
 			/* Table Version Changes */
-			//if ( isset( $settings['db_version'] ) )
-		//		$old_db_version = $settings['db_version'];
-	//		else
+			if ( isset( $settings['db_version'] ) )
+				$old_db_version = $settings['db_version'];
+			else
 				$old_db_version = 0;
 			
-			if ( version_compare( $old_db_version, '1.0.0', '<' ) )
-				$this->init_db_table();
 
 			$settings['version'] = ISSUEM_LP_SM_VERSION;
 			$settings['db_version'] = ISSUEM_LP_SM_DB_VERSION;
@@ -361,22 +435,115 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 			$this->update_settings( $settings );
 			
 		}
-		
-		function init_db_table() {
-			
+				
+		function update_2_0_0() {
 			global $wpdb;
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+						
+			echo '<h3>' . __( 'Version 2.0.0 Update Process', 'issuem-lp-sm' ) . '</h1>';
+			echo '<p>' . __( 'We have decided to use the WordPress Users table to instead of maintaining our own subscribers table. This process will copy all existing leaky paywall subscriber meta data to individual WordPress users meta.', 'issuem-lp-sm' ) . '</p>';
 			
-			$table_name = $wpdb->prefix . 'issuem_leaky_paywall_subscriber_meta';
+            $n = ( isset($_GET['n']) ) ? intval($_GET['n']) : 0;
 
-			$sql = "CREATE TABLE $table_name (
-				hash        VARCHAR(64)   NOT NULL,
-				meta_key    VARCHAR(254)  NOT NULL,
-				meta_value  VARCHAR(254)  NOT NULL
-			);";
+			$sql = "SELECT lps.* FROM " . $wpdb->prefix . "issuem_leaky_paywall_subscriber_meta as lps LIMIT " . $n . ", 5";
+
+            $subscriber_meta = $wpdb->get_results( $sql );
+            
+            echo "<ul>";
+            foreach ( (array) $subscriber_meta as $meta ) {
+            
+            	foreach ( array( 'live', 'test' ) as $mode ) {
+		            	
+	            	$subscriber = get_issuem_leaky_paywall_subscriber_by_hash( $meta->hash, $mode );
+	            	
+	            	if ( !empty( $subscriber ) ) {
+	            	
+		                echo '<li>' . sprintf( __( 'Copying user meta data for %s (%s mode user)...', 'issuem-lp-sm' ), $subscriber->data->user_email, $mode );
+						update_user_meta( $subscriber->ID, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta->meta_key, $meta->meta_value );
+		                echo __( 'completed.', 'issuem-leaky-paywall' ) . '</li>';
+		            	
+	            	} else {
+	            	
+		                echo '<li>' . sprintf( __( 'No valid subscriber found with hash %s in %s mode.', 'issuem-lp-sm' ), $meta->hash, $mode ) . '</li>';
+		                
+		            }
+	            	
+            	}
+                
+            }
+            echo "</ul>";
+            
+            if ( empty( $subscriber_meta ) || 5 > count( $subscriber_meta ) ) {
+            
+                echo '<p>' . __( 'Finished Migrating Subscriber Meta!', 'issuem-lp-sm' ) . '</p>';
+                echo '<p>' . __( 'Updating Settings...', 'issuem-lp-sm' ) . '</p>';
+                
+                $settings = $this->get_settings();
+                
+                echo '<p>' . __( 'All Done!', 'issuem-lp-sm' ) . '</p>';
+				update_option( 'leaky_paywall_subscriber_meta_manual_update_version', '2.0.0' );
+                return;
+                
+            } else {
+	            
+	            ?><p><?php _e( 'If your browser doesn&#8217;t start loading the next page automatically, click this link:' ); ?> <a class="button" href="admin.php?page=leaky-paywall-update&amp;n=<?php echo ($n + 5) ?>"><?php _e( 'Next Subscriber Meta set', 'issuem-lp-sm' ); ?></a></p>
+	            <script type='text/javascript'>
+	            <!--
+	            function nextpage() {
+	                location.href = "admin.php?page=leaky-paywall-subscriber-meta-update&n=<?php echo ($n + 5) ?>";
+	            }
+	            setTimeout( "nextpage()", 250 );
+	            //-->
+	            </script><?php
+	            
+            }
+
+		}
+		
+		function update_notices() {
+		
+			global $hook_suffix;
 			
-			dbDelta( $sql );
+			$manual_update_version = get_option( 'leaky_paywall_manual_update_version' );
+						
+			if ( version_compare( $manual_update_version, '2.0.0', '<' ) ) {
 			
+				?>
+				<div id="leaky-paywall-2-0-0-update-nag" class="update-nag">
+					<?php _e( 'You cannot use the Subscriber Meta plugin until you update Leaky Paywall Database to version 2.' ); ?>
+				</div>
+				<?php
+				
+			} else {
+				
+				$settings = $this->get_settings();
+
+				if ( isset( $settings['version'] ) )
+					$old_version = $settings['version'];
+				else
+					$old_version = 0;
+					
+				if ( !empty( $old_version ) ) { //new installs shouldn't see this notice
+					if ( current_user_can( 'manage_options' ) ) {
+						if ( 'admin_page_leaky-paywall-update' !== $hook_suffix && 'leaky-paywall_page_leaky-paywall-update' !== $hook_suffix ) {
+											
+							$manual_update_version = get_option( 'leaky_paywall_subscriber_meta_manual_update_version' );
+												
+							if ( version_compare( $manual_update_version, '2.0.0', '<' ) ) {
+								?>
+								<div id="leaky-paywall-subscriber-meta-2-0-0-update-nag" class="update-nag">
+									<?php
+									$update_link    = add_query_arg( array( 'page' => 'leaky-paywall-subscriber-meta-update' ), admin_url( 'admin.php' ) );
+									printf( __( 'You must update the Leaky Paywall Subscriber Meta Database to version 2 to continue using this plugin... %s', 'issuem-leaky-paywall' ), '<a class="btn" href="' . $update_link . '">' . __( 'Update Now', 'issuem-leaky-paywall' ) . '</a>' );
+									?>
+								</div>
+								<?php
+							}
+						}
+					}
+				}
+			
+			}
+
 		}
 		
 	}

@@ -42,21 +42,37 @@ function issuem_leaky_paywall_subscriber_meta_plugins_loaded() {
 	else
 		define( 'ISSUEM_ACTIVE_LP_SM', false );
 
-	require_once( 'class.php' );
+	if ( is_plugin_active( 'issuem-leaky-paywall/issuem-leaky-paywall.php' ) ) {
 
-	// Instantiate the Pigeon Pack class
-	if ( class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
-		
-		global $dl_pluginissuem_leaky_paywall_subscriber_meta;
-		
-		$dl_pluginissuem_leaky_paywall_subscriber_meta = new IssueM_Leaky_Paywall_Subscriber_Meta();
-		
-		require_once( 'functions.php' );
+		require_once( 'class.php' );
+	
+		// Instantiate the Pigeon Pack class
+		if ( class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 			
-		//Internationalization
-		load_plugin_textdomain( 'issuem-lp-sm', false, ISSUEM_LP_SM_REL_DIR . '/i18n/' );
+			global $dl_pluginissuem_leaky_paywall_subscriber_meta;
 			
+			$dl_pluginissuem_leaky_paywall_subscriber_meta = new IssueM_Leaky_Paywall_Subscriber_Meta();
+			
+			require_once( 'functions.php' );
+				
+			//Internationalization
+			load_plugin_textdomain( 'issuem-lp-sm', false, ISSUEM_LP_SM_REL_DIR . '/i18n/' );
+				
+		}
+	
+	} else {
+	
+		add_action( 'admin_notices', 'issuem_leaky_paywall_subscriber_meta_requirement_nag' );
+		
 	}
 
 }
 add_action( 'plugins_loaded', 'issuem_leaky_paywall_subscriber_meta_plugins_loaded', 4815162342 ); //wait for the plugins to be loaded before init
+
+function issuem_leaky_paywall_subscriber_meta_requirement_nag() {
+	?>
+	<div id="leaky-paywall-requirement-nag" class="update-nag">
+		<?php _e( 'You must have the Leaky Paywall plugin activated to use the Leaky Paywall Subscriber Meta plugin.' ); ?>
+	</div>
+	<?php
+}
