@@ -1,6 +1,6 @@
 <?php
 /**
- * @package IssueM's Leaky Paywall - Subscriber Meta
+ * @package zeen101's Leaky Paywall - Subscriber Meta
  * @since 1.0.0
  */
 

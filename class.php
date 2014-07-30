@@ -1,8 +1,8 @@
 <?php
 /**
- * Registers IssueM's Leaky Paywall class
+ * Registers zeen101's Leaky Paywall class
  *
- * @package IssueM's Leaky Paywall
+ * @package zeen101's Leaky Paywall
  * @since 1.0.0
  */
 
@@ -11,9 +11,9 @@
  *
  * @since 1.0.0
  */
-if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
+if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 	
-	class IssueM_Leaky_Paywall_Subscriber_Meta {
+	class Leaky_Paywall_Subscriber_Meta {
 		
 		/**
 		 * Class constructor, puts things in motion
@@ -52,7 +52,7 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 		
 		/**
-		 * Prints backend IssueM styles
+		 * Prints backend styles
 		 *
 		 * @since 1.0.0
 		 */
@@ -62,12 +62,12 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 			
 			if ( 'leaky-paywall_page_leaky-paywall-subscribers' === $hook_suffix
 				|| 'toplevel_page_issuem-leaky-paywall' === $hook_suffix )
-				wp_enqueue_style( 'issuem_leaky_paywall_sm_settings_style', ISSUEM_LP_SM_URL . 'css/issuem-leaky-paywall-settings.css', '', ISSUEM_LP_SM_VERSION );
+				wp_enqueue_style( 'issuem_leaky_paywall_sm_settings_style', LP_SM_URL . 'css/issuem-leaky-paywall-settings.css', '', LP_SM_VERSION );
 			
 		}
 	
 		/**
-		 * Enqueues backend IssueM styles
+		 * Enqueues backend styles
 		 *
 		 * @since 1.0.0
 		 */
@@ -75,7 +75,7 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 			
 			if ( 'leaky-paywall_page_leaky-paywall-subscribers' === $hook_suffix
 				|| 'toplevel_page_issuem-leaky-paywall' === $hook_suffix )
-				wp_enqueue_script( 'issuem_leaky_paywall_sm_settings_js', ISSUEM_LP_SM_URL . 'js/issuem-leaky-paywall-settings.js', array( 'jquery' ), ISSUEM_LP_SM_VERSION );
+				wp_enqueue_script( 'issuem_leaky_paywall_sm_settings_js', LP_SM_URL . 'js/issuem-leaky-paywall-settings.js', array( 'jquery' ), LP_SM_VERSION );
 				
 			
 		}
@@ -96,7 +96,7 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 		
 		/**
-		 * Get IssueM's Leaky Paywall - Subscriber Meta options
+		 * Get zeen101's Leaky Paywall - Subscriber Meta options
 		 *
 		 * @since 1.0.0
 		 */
@@ -115,7 +115,7 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 		
 		/**
-		 * Update IssueM's Leaky Paywall options
+		 * Update zeen101's Leaky Paywall options
 		 *
 		 * @since 1.0.0
 		 */
@@ -126,7 +126,7 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 		
 		/**
-		 * Create and Display IssueM settings page
+		 * Create and Display settings page
 		 *
 		 * @since 1.0.0
 		 */
@@ -429,8 +429,8 @@ if ( ! class_exists( 'IssueM_Leaky_Paywall_Subscriber_Meta' ) ) {
 				$old_db_version = 0;
 			
 
-			$settings['version'] = ISSUEM_LP_SM_VERSION;
-			$settings['db_version'] = ISSUEM_LP_SM_DB_VERSION;
+			$settings['version'] = LP_SM_VERSION;
+			$settings['db_version'] = LP_SM_DB_VERSION;
 			
 			$this->update_settings( $settings );
 			
