@@ -32,8 +32,8 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_wp_enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( $this, 'admin_wp_print_styles' ) );
 			
-			add_action( 'issuem_leaky_paywall_settings_form', array( $this, 'settings_div' ) );
-			add_action( 'issuem_leaky_paywall_update_settings', array( $this, 'update_settings_div' ) );
+			add_action( 'leaky_paywall_settings_form', array( $this, 'settings_div' ) );
+			add_action( 'leaky_paywall_update_settings', array( $this, 'update_settings_div' ) );
 			
 			add_filter( 'leaky_paywall_subscribers_columns', array( $this, 'leaky_paywall_subscribers_columns' ) );
 			//add_filter( 'leaky_paywall_subscribers_sortable_columns', array( $this, 'leaky_paywall_subscribers_sortable_columns' ) );
@@ -45,9 +45,9 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 			add_action( 'add_leaky_paywall_subscriber', array( $this, 'add_leaky_paywall_subscriber' ) );
 			add_action( 'bulk_add_leaky_paywall_subscriber', array( $this, 'bulk_add_leaky_paywall_subscriber' ), 10, 3 );
 			
-			//add_filter( 'issuem_leaky_paywall_subscriber_query_join', array( $this, 'issuem_leaky_paywall_subscriber_query_join' ) );
+			//add_filter( 'leaky_paywall_subscriber_query_join', array( $this, 'leaky_paywall_subscriber_query_join' ) );
 			//add_filter( 'issuem_leaky_paywall_search_susbcriber_where_array', array( $this, 'issuem_leaky_paywall_search_susbcriber_where_array' ), 10, 3 );
-			add_filter( 'issuem_leaky_paywall_bulk_add_headings', array( $this, 'issuem_leaky_paywall_bulk_add_headings' ) );
+			add_filter( 'leaky_paywall_bulk_add_headings', array( $this, 'leaky_paywall_bulk_add_headings' ) );
 			
 		}
 		
@@ -62,7 +62,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 			
 			if ( 'leaky-paywall_page_leaky-paywall-subscribers' === $hook_suffix
 				|| 'toplevel_page_issuem-leaky-paywall' === $hook_suffix )
-				wp_enqueue_style( 'issuem_leaky_paywall_sm_settings_style', LP_SM_URL . 'css/issuem-leaky-paywall-settings.css', '', LP_SM_VERSION );
+				wp_enqueue_style( 'leaky_paywall_sm_settings_style', LP_SM_URL . 'css/issuem-leaky-paywall-settings.css', '', LP_SM_VERSION );
 			
 		}
 	
@@ -75,7 +75,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 			
 			if ( 'leaky-paywall_page_leaky-paywall-subscribers' === $hook_suffix
 				|| 'toplevel_page_issuem-leaky-paywall' === $hook_suffix )
-				wp_enqueue_script( 'issuem_leaky_paywall_sm_settings_js', LP_SM_URL . 'js/issuem-leaky-paywall-settings.js', array( 'jquery' ), LP_SM_VERSION );
+				wp_enqueue_script( 'leaky_paywall_sm_settings_js', LP_SM_URL . 'js/issuem-leaky-paywall-settings.js', array( 'jquery' ), LP_SM_VERSION );
 				
 			
 		}
@@ -106,7 +106,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 				'meta_keys' => array(),
 			);
 		
-			$defaults = apply_filters( 'issuem_leaky_paywall_subscriber_meta_default_settings', $defaults );
+			$defaults = apply_filters( 'leaky_paywall_subscriber_meta_default_settings', $defaults );
 			
 			$settings = get_option( 'issuem-leaky-paywall-subscriber-meta' );
 												
@@ -240,10 +240,10 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		
 		function manage_leaky_paywall_susbcribers_custom_column( $output, $column, $hash ) {
 			
-			$lp_settings = get_issuem_leaky_paywall_settings();
+			$lp_settings = get_leaky_paywall_settings();
 			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 			
-        	$subscriber = get_issuem_leaky_paywall_subscriber_by_hash( $hash, $mode );
+        	$subscriber = get_leaky_paywall_subscriber_by_hash( $hash, $mode );
 			if ( !empty( $subscriber ) ) 
 				return get_user_meta( $subscriber->ID, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $column, true );
 			else
@@ -254,7 +254,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		function update_leaky_paywall_subscriber_form( $subscriber_id ) {
 			$settings = $this->get_settings();
         	
-			$lp_settings = get_issuem_leaky_paywall_settings();
+			$lp_settings = get_leaky_paywall_settings();
 			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 			
             if ( !empty( $settings['meta_keys'] ) ) {
@@ -279,7 +279,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		function update_leaky_paywall_subscriber( $subscriber_id ) {
 			$settings = $this->get_settings();
         	
-			$lp_settings = get_issuem_leaky_paywall_settings();
+			$lp_settings = get_leaky_paywall_settings();
 			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 
             if ( !empty( $settings['meta_keys'] ) ) {
@@ -317,7 +317,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		function add_leaky_paywall_subscriber( $subscriber_id ) {
 			$settings = $this->get_settings();
         	
-			$lp_settings = get_issuem_leaky_paywall_settings();
+			$lp_settings = get_leaky_paywall_settings();
 			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 			
             if ( !empty( $settings['meta_keys'] ) ) {
@@ -335,7 +335,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		function bulk_add_leaky_paywall_subscriber( $subscriber_id, $keys, $import ) {
 			$settings = $this->get_settings();
 			
-			$lp_settings = get_issuem_leaky_paywall_settings();
+			$lp_settings = get_leaky_paywall_settings();
 			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 						
             if ( !empty( $settings['meta_keys'] ) ) {
@@ -350,7 +350,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
             }
 		}
 		
-		function issuem_leaky_paywall_subscriber_query_join( $join ) {
+		function leaky_paywall_subscriber_query_join( $join ) {
 			global $wpdb;
 			return $join . ' LEFT JOIN ' . $wpdb->prefix . 'issuem_leaky_paywall_subscriber_meta AS lpsm ON lpsm.hash = lps.hash ';
 		}
@@ -360,7 +360,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
             return $where_array;
 		}
 		
-		function issuem_leaky_paywall_bulk_add_headings( $headings ) {
+		function leaky_paywall_bulk_add_headings( $headings ) {
 			$settings = $this->get_settings();
 			
             if ( !empty( $settings['meta_keys'] ) ) {
@@ -396,8 +396,6 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 					?>
                                         
 					<?php wp_nonce_field( 'issuem_leaky_paywall_subscriber_meta_update', 'issuem_leaky_paywall_subscriber_meta_update_nonce' ); ?>
-					
-                    <?php do_action( 'issuem_leaky_paywall_update_form' ); ?>
                     
                 </form>
                 
@@ -453,7 +451,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
             
             	foreach ( array( 'live', 'test' ) as $mode ) {
 		            	
-	            	$subscriber = get_issuem_leaky_paywall_subscriber_by_hash( $meta->hash, $mode );
+	            	$subscriber = get_leaky_paywall_subscriber_by_hash( $meta->hash, $mode );
 	            	
 	            	if ( !empty( $subscriber ) ) {
 	            	
