@@ -2,7 +2,7 @@
 Contributors: layotte, peterericson
 Tags: magazine, news, metered, paywall, leaky, subscriber, meta
 Requires at least: 3.0
-Tested up to: 3.9
+Tested up to: 4.1 
 Stable tag: 2.0.0
 
 Allow custom subscriber (meta) fields to zeen101's Leaky Paywall for WordPress. More info at http://zeen101.com

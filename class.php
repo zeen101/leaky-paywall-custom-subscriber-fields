@@ -264,13 +264,12 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
 						           	
 						$meta_value = get_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, true );
-						
-	                ?>
+						?>
                     	<p>
                         <label for="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key" style="display:table-cell"><?php echo $label; ?></label>
                         <input id="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key" class="subscriber-meta-key subscriber-<?php echo $meta_key; ?>-meta-key" type="text" value="<?php echo $meta_value; ?>" name="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key"  />
                         </p>
-	                <?php
+						<?php
                 	}
                 }
             }
