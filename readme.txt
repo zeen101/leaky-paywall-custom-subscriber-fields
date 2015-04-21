@@ -2,8 +2,8 @@
 Contributors: layotte, peterericson
 Tags: magazine, news, metered, paywall, leaky, subscriber, meta
 Requires at least: 3.0
-Tested up to: 4.1 
-Stable tag: 2.0.0
+Tested up to: 4.2
+Stable tag: 2.1.0
 
 Allow custom subscriber (meta) fields to zeen101's Leaky Paywall for WordPress. More info at http://zeen101.com
 
@@ -34,6 +34,9 @@ You must have:
 * Leaky Paywall - Custom Subscriber Meta Fields is GPL
 
 == Changelog ==
+= 2.1.0 =
+* Escaping add/remove_query_arg calls properly
+
 = 2.0.0 =
 * Removing old references to IssueM
 * Setup Update to 2.0.0 in prep for Leaky Paywall 2.0.0 launch
