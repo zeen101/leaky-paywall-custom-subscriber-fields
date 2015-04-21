@@ -37,7 +37,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 			
 			add_filter( 'leaky_paywall_subscribers_columns', array( $this, 'leaky_paywall_subscribers_columns' ) );
 			//add_filter( 'leaky_paywall_subscribers_sortable_columns', array( $this, 'leaky_paywall_subscribers_sortable_columns' ) );
-			add_filter( 'manage_leaky_paywall_susbcribers_custom_column', array( $this, 'manage_leaky_paywall_susbcribers_custom_column' ), 10, 3 );
+			add_filter( 'manage_leaky_paywall_subscribers_custom_column', array( $this, 'manage_leaky_paywall_subscribers_custom_column' ), 10, 3 );
 			
 			add_action( 'update_leaky_paywall_subscriber_form', array( $this, 'update_leaky_paywall_subscriber_form' ) );
 			add_action( 'update_leaky_paywall_subscriber', array( $this, 'update_leaky_paywall_subscriber' ) );
@@ -238,7 +238,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
             return $columns;
 		}
 		
-		function manage_leaky_paywall_susbcribers_custom_column( $output, $column, $hash ) {
+		function manage_leaky_paywall_subscribers_custom_column( $output, $column, $hash ) {
 			
 			$lp_settings = get_leaky_paywall_settings();
 			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
@@ -530,7 +530,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 								<div id="leaky-paywall-subscriber-meta-2-0-0-update-nag" class="update-nag">
 									<?php
 									$update_link    = add_query_arg( array( 'page' => 'leaky-paywall-subscriber-meta-update' ), admin_url( 'admin.php' ) );
-									printf( __( 'You must update the Leaky Paywall Subscriber Meta Database to version 2 to continue using this plugin... %s', 'issuem-leaky-paywall' ), '<a class="btn" href="' . $update_link . '">' . __( 'Update Now', 'issuem-leaky-paywall' ) . '</a>' );
+									printf( __( 'You must update the Leaky Paywall Subscriber Meta Database to version 2 to continue using this plugin... %s', 'issuem-leaky-paywall' ), '<a class="btn" href="' . esc_url( $update_link ) . '">' . __( 'Update Now', 'issuem-leaky-paywall' ) . '</a>' );
 									?>
 								</div>
 								<?php
