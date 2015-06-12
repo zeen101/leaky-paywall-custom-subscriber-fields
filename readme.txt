@@ -5,7 +5,7 @@ Requires at least: 3.0
 Tested up to: 4.2
 Stable tag: 2.1.0
 
-Allow custom subscriber (meta) fields to zeen101's Leaky Paywall for WordPress. More info at http://zeen101.com
+Allow <a href="https://zeen101.com/downloads/subscriber-meta-free/">custom subscriber (meta) fields</a> to zeen101's Leaky Paywall for WordPress.
 
 == Description ==
 
