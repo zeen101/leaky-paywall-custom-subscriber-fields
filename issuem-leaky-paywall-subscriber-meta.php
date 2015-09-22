@@ -36,6 +36,8 @@ define( 'LP_SM_REL_DIR', 	dirname( LP_SM_BASENAME ) );
  */
 function issuem_leaky_paywall_subscriber_meta_plugins_loaded() {
 	
+	global $is_leaky_paywall, $which_leaky_paywall;
+	
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	if ( is_plugin_active( 'issuem/issuem.php' ) )
 		define( 'ACTIVE_LP_SM', true );
@@ -43,7 +45,18 @@ function issuem_leaky_paywall_subscriber_meta_plugins_loaded() {
 		define( 'ACTIVE_LP_SM', false );
 
 	if ( is_plugin_active( 'issuem-leaky-paywall/issuem-leaky-paywall.php' ) ) {
+		$is_leaky_paywall = true;
+		$which_leaky_paywall = '_issuem';
+	} else if ( is_plugin_active( 'leaky-paywall/leaky-paywall.php' ) ) {
+		$is_leaky_paywall = true;
+		$which_leaky_paywall = '';
+	} else {
+		$is_leaky_paywall = false;
+		$which_leaky_paywall = '';
+	}
 
+
+	if ( !empty( $is_leaky_paywall ) ) {
 		require_once( 'class.php' );
 	
 		// Instantiate the Pigeon Pack class

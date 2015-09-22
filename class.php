@@ -239,19 +239,20 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 		
 		function manage_leaky_paywall_subscribers_custom_column( $output, $column, $hash ) {
-			
+			global $is_leaky_paywall, $which_leaky_paywall;
 			$lp_settings = get_leaky_paywall_settings();
 			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 			
         	$subscriber = get_leaky_paywall_subscriber_by_hash( $hash, $mode );
 			if ( !empty( $subscriber ) ) 
-				return get_user_meta( $subscriber->ID, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $column, true );
+				return get_user_meta( $subscriber->ID, $which_leaky_paywall . '_leaky_paywall_' . $mode . '_subscriber_meta_' . $column, true );
 			else
 				return '';
 			
 		}
 		
 		function update_leaky_paywall_subscriber_form( $subscriber_id ) {
+			global $is_leaky_paywall, $which_leaky_paywall;
 			$settings = $this->get_settings();
         	
 			$lp_settings = get_leaky_paywall_settings();
@@ -263,7 +264,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
                 		$label = $meta_key['name'];
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
 						           	
-						$meta_value = get_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, true );
+						$meta_value = get_user_meta( $subscriber_id, $which_leaky_paywall . '_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, true );
 						?>
                     	<p>
                         <label for="leaky-paywall-subscriber-<?php echo $meta_key; ?>-meta-key" style="display:table-cell"><?php echo $label; ?></label>
@@ -276,6 +277,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 		
 		function update_leaky_paywall_subscriber( $subscriber_id ) {
+			global $is_leaky_paywall, $which_leaky_paywall;
 			$settings = $this->get_settings();
         	
 			$lp_settings = get_leaky_paywall_settings();
@@ -287,7 +289,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
 	                	if ( !empty( $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] ) ) {
 	                	
-							update_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] );
+							update_user_meta( $subscriber_id, $which_leaky_paywall . '_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] );
 	                	}
                 	}
                 }
@@ -314,6 +316,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 		
 		function add_leaky_paywall_subscriber( $subscriber_id ) {
+			global $is_leaky_paywall, $which_leaky_paywall;
 			$settings = $this->get_settings();
         	
 			$lp_settings = get_leaky_paywall_settings();
@@ -324,7 +327,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
                 	if ( !empty( $meta_key['name'] ) ) {
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );			
 	                	if ( !empty( $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] ) ) {
-							update_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] );
+							update_user_meta( $subscriber_id, $which_leaky_paywall . '_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, $_REQUEST['leaky-paywall-subscriber-' . $meta_key . '-meta-key'] );
 	                	}
                 	}
                 }
@@ -332,6 +335,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 		
 		function bulk_add_leaky_paywall_subscriber( $subscriber_id, $keys, $import ) {
+			global $is_leaky_paywall, $which_leaky_paywall;
 			$settings = $this->get_settings();
 			
 			$lp_settings = get_leaky_paywall_settings();
@@ -342,7 +346,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
                 	if ( !empty( $meta_key['name'] ) ) {
 	                	$meta_key = sanitize_title_with_dashes( $meta_key['name'] );
 	                	if ( array_key_exists( $meta_key, $keys ) ) {
-							update_user_meta( $subscriber_id, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, trim( $import[$keys[$meta_key]] ) );
+							update_user_meta( $subscriber_id, $which_leaky_paywall . '_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta_key, trim( $import[$keys[$meta_key]] ) );
 	                	}
                 	}
                 }
@@ -434,8 +438,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 		}
 				
 		function update_2_0_0() {
-			global $wpdb;
-						
+			global $wpdb, $is_leaky_paywall, $which_leaky_paywall;
 			echo '<h3>' . __( 'Version 2.0.0 Update Process', 'issuem-lp-sm' ) . '</h1>';
 			echo '<p>' . __( 'We have decided to use the WordPress Users table to instead of maintaining our own subscribers table. This process will copy all existing leaky paywall subscriber meta data to individual WordPress users meta.', 'issuem-lp-sm' ) . '</p>';
 			
@@ -455,7 +458,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
 	            	if ( !empty( $subscriber ) ) {
 	            	
 		                echo '<li>' . sprintf( __( 'Copying user meta data for %s (%s mode user)...', 'issuem-lp-sm' ), $subscriber->data->user_email, $mode );
-						update_user_meta( $subscriber->ID, '_issuem_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta->meta_key, $meta->meta_value );
+						update_user_meta( $subscriber->ID, $which_leaky_paywall . '_leaky_paywall_' . $mode . '_subscriber_meta_' . $meta->meta_key, $meta->meta_value );
 		                echo __( 'completed.', 'issuem-leaky-paywall' ) . '</li>';
 		            	
 	            	} else {
