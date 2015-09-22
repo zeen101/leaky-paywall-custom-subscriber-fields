@@ -11,7 +11,7 @@ Plugin Name: Leaky Paywall - Subscriber Meta
 Plugin URI: http://zeen101.com/
 Description: A premium addon for the Leaky Paywall for WordPress plugin.
 Author: zeen101 Development Team
-Version: 2.1.0
+Version: 2.2.0
 Author URI: http://zeen101.com/
 Tags:
 */

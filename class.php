@@ -141,7 +141,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
             
                 <div class="handlediv" title="Click to toggle"><br /></div>
                 
-                <h3 class="hndle"><span><?php _e( 'Leaky Paywall - Subscriber Meta', 'issuem-lp-sm' ); ?></span></h3>
+                <h3 class="hndle"><span><?php _e( 'Custom Subscriber Meta Fields', 'issuem-lp-sm' ); ?></span></h3>
                 
                 <div class="inside">
                 
@@ -182,7 +182,7 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
                 </p>
                                                               
                 <p class="submit">
-                    <input class="button-primary" type="submit" name="update_issuem_leaky_paywall_settings" value="<?php _e( 'Save Settings', 'issuem-lp-sm' ) ?>" />
+                    <input class="button-primary" type="submit" name="update_leaky_paywall_settings" value="<?php _e( 'Save Settings', 'issuem-lp-sm' ) ?>" />
                 </p>
 
                 </div>
