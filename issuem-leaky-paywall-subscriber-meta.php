@@ -22,7 +22,7 @@ if ( !defined( 'ZEEN101_STORE_URL' ) )
 	
 define( 'LP_SM_NAME', 		'Leaky Paywall - Subscriber Meta' );
 define( 'LP_SM_SLUG', 		'issuem-leaky-paywall-subscriber-meta' );
-define( 'LP_SM_VERSION', 	'2.1.0' );
+define( 'LP_SM_VERSION', 	'2.2.0' );
 define( 'LP_SM_DB_VERSION', '1.0.0' );
 define( 'LP_SM_URL', 		plugin_dir_url( __FILE__ ) );
 define( 'LP_SM_PATH', 		plugin_dir_path( __FILE__ ) );
