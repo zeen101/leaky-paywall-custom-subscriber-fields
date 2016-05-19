@@ -238,14 +238,14 @@ if ( ! class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
             return $columns;
 		}
 
-		function manage_leaky_paywall_subscribers_custom_column( $output, $column, $hash ) {
+		function manage_leaky_paywall_subscribers_custom_column( $output, $column, $user_id ) {
 			global $is_leaky_paywall;
 			$lp_settings = get_leaky_paywall_settings();
 			$mode = 'off' === $lp_settings['test_mode'] ? 'live' : 'test';
 
-        	$subscriber = get_leaky_paywall_subscriber_by_hash( $hash, $mode );
-			if ( !empty( $subscriber ) )
-				return get_leaky_user_meta( $subscriber->ID, '_leaky_paywall_' . $mode . '_subscriber_meta_' . $column );
+        	//$subscriber = get_leaky_paywall_subscriber_by_hash( $hash, $mode );
+			if ( !empty( $user_id ) )
+				return get_leaky_user_meta( $user_id, '_leaky_paywall_' . $mode . '_subscriber_meta_' . $column );
 			else
 				return '';
 
