@@ -5,7 +5,7 @@
  * @package zeen101's Leak Paywall - Subscriber Meta
  * @since 1.0.0
  */
- 
+
 /*
 Plugin Name: Leaky Paywall - Subscriber Meta
 Plugin URI: http://zeen101.com/
@@ -19,10 +19,10 @@ Tags:
 //Define global variables...
 if ( !defined( 'ZEEN101_STORE_URL' ) )
 	define( 'ZEEN101_STORE_URL',	'http://zeen101.com' );
-	
+
 define( 'LP_SM_NAME', 		'Leaky Paywall - Subscriber Meta' );
 define( 'LP_SM_SLUG', 		'issuem-leaky-paywall-subscriber-meta' );
-define( 'LP_SM_VERSION', 	'2.2.0' );
+define( 'LP_SM_VERSION', 	'2.2.1' );
 define( 'LP_SM_DB_VERSION', '1.0.0' );
 define( 'LP_SM_URL', 		plugin_dir_url( __FILE__ ) );
 define( 'LP_SM_PATH', 		plugin_dir_path( __FILE__ ) );
@@ -35,21 +35,18 @@ define( 'LP_SM_REL_DIR', 	dirname( LP_SM_BASENAME ) );
  * @since 1.0.0
  */
 function issuem_leaky_paywall_subscriber_meta_plugins_loaded() {
-	
+
 	global $is_leaky_paywall, $which_leaky_paywall;
-	
+
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	if ( is_plugin_active( 'issuem/issuem.php' ) )
 		define( 'ACTIVE_LP_SM', true );
 	else
 		define( 'ACTIVE_LP_SM', false );
 
-	if ( is_plugin_active( 'issuem-leaky-paywall/issuem-leaky-paywall.php' ) ) {
+    if ( is_plugin_active( 'issuem-leaky-paywall/issuem-leaky-paywall.php' ) || is_plugin_active( 'leaky-paywall/leaky-paywall.php' ) ) {
 		$is_leaky_paywall = true;
 		$which_leaky_paywall = '_issuem';
-	} else if ( is_plugin_active( 'leaky-paywall/leaky-paywall.php' ) ) {
-		$is_leaky_paywall = true;
-		$which_leaky_paywall = '';
 	} else {
 		$is_leaky_paywall = false;
 		$which_leaky_paywall = '';
@@ -58,25 +55,25 @@ function issuem_leaky_paywall_subscriber_meta_plugins_loaded() {
 
 	if ( !empty( $is_leaky_paywall ) ) {
 		require_once( 'class.php' );
-	
+
 		// Instantiate the Pigeon Pack class
 		if ( class_exists( 'Leaky_Paywall_Subscriber_Meta' ) ) {
-			
+
 			global $dl_pluginissuem_leaky_paywall_subscriber_meta;
-			
+
 			$dl_pluginissuem_leaky_paywall_subscriber_meta = new Leaky_Paywall_Subscriber_Meta();
-			
+
 			require_once( 'functions.php' );
-				
+
 			//Internationalization
 			load_plugin_textdomain( 'issuem-lp-sm', false, LP_SM_REL_DIR . '/i18n/' );
-				
+
 		}
-	
+
 	} else {
-	
+
 		add_action( 'admin_notices', 'issuem_leaky_paywall_subscriber_meta_requirement_nag' );
-		
+
 	}
 
 }
